@@ -9,8 +9,9 @@
         	"caption": "Sessions",
         	"children":
         	[
-        		{"caption": "Save current session", "command": "savecurrentsession"},
-        		{"caption": "Load session", "command": "example"}
+        		{"caption": "Save current session", "command": "save_current_session"},
+                {"caption": "Save session as...", "command": "save_as"},
+        		{"caption": "Load session", "command": "load_session"}
         	]
         }
     ]  
