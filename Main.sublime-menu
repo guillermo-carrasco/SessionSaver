@@ -1,0 +1,18 @@
+[  
+{  
+	"caption":"File",
+	"mnemonic": "F",
+    "id": "file",
+    "children":  
+    [  
+        {
+        	"caption": "Sessions",
+        	"children":
+        	[
+        		{"caption": "Save current session", "command": "savecurrentsession"},
+        		{"caption": "Load session", "command": "example"}
+        	]
+        }
+    ]  
+}  
+] 
