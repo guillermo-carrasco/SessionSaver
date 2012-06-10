@@ -1,7 +1,7 @@
 [  
 {  
-	"caption":"File",
-	"mnemonic": "F",
+    "caption":"File",
+    "mnemonic": "F",
     "id": "file",
     "children":  
     [  
@@ -10,7 +10,8 @@
         	"children":
         	[
                 {"caption": "Save session as...", "command": "save_as"},
-        		{"caption": "Load session", "command": "load_session"}
+        		{"caption": "Load session", "command": "load_session"},
+                {"caption": "Remove session", "command": "remove_session"}
         	]
         }
     ]  

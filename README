@@ -8,3 +8,15 @@ Author: Guillermo Carrasco Hernandez
 This plugin pretends to ease the session managment in sublime.
 
 With this plugin you can save and restore your opened document sessions. So you don't need to keep different windows opened to work with different sessions any more.
+
+
+Current version 1.0
+-------------------
+- Able to save many sessions
+- Able to load a stored session
+- Able to remove sessions
+
+In incoming versions...
+-----------------------
+- Check before overwritting a session when saving a new one with an existing name
+- Ask for confirmation before removing a session
