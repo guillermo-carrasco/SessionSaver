@@ -3,33 +3,37 @@ import sublime_plugin
 import os
 
 if not os.path.exists(sublime.packages_path() + '/SessionSaver/sessions/'):
-	os.makedirs(sublime.packages_path() + '/SessionSaver/sessions/')
+	try:
+		os.makedirs(sublime.packages_path() + '/SessionSaver/sessions/')
+	except OSError as e:
+		sublime.error_message('Could not create sessions folder!\n' + e.strerror)
 
 
 class SaveAsCommand(sublime_plugin.WindowCommand):
-	"""
-	Basically saves the current session with the given name. By the moment, and until ok_cancel_dialog is available
-	in the stable version of sublime, if a session with the same name than the entered by the user exists, it will
-	be overwritten.
-	"""
 	def run(self):
 		self.window.show_input_panel("Name of this session:", "", self.on_done, None, None)
-		pass
 
 	def on_done(self, sessionName):
-		views = self.window.views()
-		packageDir = sublime.packages_path() + '/SessionSaver/sessions/'
-		f = open(packageDir + sessionName, 'w')
-		for v in views:
-			f.write(v.file_name() + '\n')
-		f.close()
-		sublime.status_message("Session saved succefully as " + sessionName + '!')
+		session = sublime.packages_path() + '/SessionSaver/sessions/' + sessionName
+		if os.path.exists(session):
+			question = 'There is another session saved with this name, do you want to replace it? (yes/no):'
+			self.window.show_input_panel(question, 'No', lambda s: self.handle_response(s, session), None, None)
+		else:
+			self.handle_response('yes', session)
+
+	def handle_response(self, answer, session):
+		if answer.upper() in ['YES', 'Y']:
+			views = self.window.views()
+			f = open(session, 'w')
+			for v in views:
+				f.write(v.file_name() + '\n')
+			f.close()
+			sublime.status_message("Session saved succefully as " + session.split('/')[-1] + '!')
+		else:
+			sublime.status_message("No session saved")
 
 
 class LoadSessionCommand(sublime_plugin.WindowCommand):
-	"""
-	Close all currently opened tabs and open the document(s) oh the selected session
-	"""
 	def run(self):
 		sessionsDir = os.path.join(sublime.packages_path(), 'SessionSaver/sessions')
 		if not os.listdir(sessionsDir):
@@ -38,20 +42,18 @@ class LoadSessionCommand(sublime_plugin.WindowCommand):
 			self.window.show_quick_panel(os.listdir(sessionsDir), self.on_done)
 
 	def on_done(self, session):
-		session = sublime.packages_path() + '/SessionSaver/sessions/' + os.listdir(sublime.packages_path() + '/SessionSaver/sessions/')[session]
-		#Close current views
-		self.window.run_command("close_all")
-		#Open saved documents
-		s = open(session, 'r')
-		for l in s.readlines():
-			self.window.open_file(l.rstrip())
-		s.close()
+		if session != -1:
+			session = sublime.packages_path() + '/SessionSaver/sessions/' + os.listdir(sublime.packages_path() + '/SessionSaver/sessions/')[session]
+			#Close current views
+			self.window.run_command("close_all")
+			#Open saved documents
+			s = open(session, 'r')
+			for l in s.readlines():
+				self.window.open_file(l.rstrip())
+			s.close()
 
 
 class RemoveSessionCommand(sublime_plugin.WindowCommand):
-	"""
-	Removes a stored session WITHOUT confirmation
-	"""
 	def run(self):
 		sessionsDir = os.path.join(sublime.packages_path(), 'SessionSaver/sessions')
 		if not os.listdir(sessionsDir):
@@ -61,12 +63,15 @@ class RemoveSessionCommand(sublime_plugin.WindowCommand):
 
 	def on_done(self, session):
 		session = sublime.packages_path() + '/SessionSaver/sessions/' + os.listdir(sublime.packages_path() + '/SessionSaver/sessions/')[session]
-		#Remove the session file
-		self.window.show_input_panel('Do you really want to remove this session (yes/no):', 'No', lambda s: self.handle_response(s), None, None)
+		self.window.show_input_panel('Do you really want to remove this session (yes/no):', 'No', lambda s: self.handle_response(s, session), None, None)
 
-	def handle_response(self, answer):
+	def handle_response(self, answer, session):
 		if answer.upper() in ['Y', 'YES']:
-			os.remove(session)
-			sublime.status_message("Session succefully removed")
+			try:
+				os.remove(session)
+			except OSError as e:
+				sublime.status_message(e.strerror)
+			else:
+				sublime.status_message("Session succefully removed")
 		else:
 			sublime.status_message("Session not removed")
