@@ -44,9 +44,7 @@ class LoadSessionCommand(sublime_plugin.WindowCommand):
 	def on_done(self, session):
 		if session != -1:
 			session = sublime.packages_path() + '/SessionSaver/sessions/' + os.listdir(sublime.packages_path() + '/SessionSaver/sessions/')[session]
-			#Close current views
 			self.window.run_command("close_all")
-			#Open saved documents
 			s = open(session, 'r')
 			for l in s.readlines():
 				self.window.open_file(l.rstrip())
