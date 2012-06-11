@@ -2,6 +2,9 @@ import sublime
 import sublime_plugin
 import os
 
+if not os.path.exists(sublime.packages_path() + '/SessionSaver/sessions/'):
+	os.makedirs(sublime.packages_path() + '/SessionSaver/sessions/')
+
 
 class SaveAsCommand(sublime_plugin.WindowCommand):
 	"""
@@ -16,8 +19,6 @@ class SaveAsCommand(sublime_plugin.WindowCommand):
 	def on_done(self, sessionName):
 		views = self.window.views()
 		packageDir = sublime.packages_path() + '/SessionSaver/sessions/'
-		if not os.path.exists(packageDir):
-			os.makedirs(packageDir)
 		f = open(packageDir + sessionName, 'w')
 		for v in views:
 			f.write(v.file_name() + '\n')
@@ -31,8 +32,6 @@ class LoadSessionCommand(sublime_plugin.WindowCommand):
 	"""
 	def run(self):
 		sessionsDir = os.path.join(sublime.packages_path(), 'SessionSaver/sessions')
-		if not os.path.exists(sessionsDir):
-			os.makedirs(sessionsDir)
 		if not os.listdir(sessionsDir):
 			sublime.status_message("There are no sessions saved")
 		else:
@@ -55,8 +54,6 @@ class RemoveSessionCommand(sublime_plugin.WindowCommand):
 	"""
 	def run(self):
 		sessionsDir = os.path.join(sublime.packages_path(), 'SessionSaver/sessions')
-		if not os.path.exists(sessionsDir):
-			os.makedirs(sessionsDir)
 		if not os.listdir(sessionsDir):
 			sublime.status_message("There are no sessions saved")
 		else:
