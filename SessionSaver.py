@@ -62,5 +62,11 @@ class RemoveSessionCommand(sublime_plugin.WindowCommand):
 	def on_done(self, session):
 		session = sublime.packages_path() + '/SessionSaver/sessions/' + os.listdir(sublime.packages_path() + '/SessionSaver/sessions/')[session]
 		#Remove the session file
-		os.remove(session)
-		sublime.status_message("Session succefully removed")
+		self.window.show_input_panel('Do you really want to remove this session (yes/no):', 'No', lambda s: self.handle_response(s), None, None)
+
+	def handle_response(self, answer):
+		if answer.upper() in ['Y', 'YES']:
+			os.remove(session)
+			sublime.status_message("Session succefully removed")
+		else:
+			sublime.status_message("Session not removed")
