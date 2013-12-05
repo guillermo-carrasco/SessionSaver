@@ -1,0 +1,5 @@
+[
+	{"command": "load_session", "caption": "SessionSaver: Load Session"},
+	{"command": "remove_session", "caption": "SessionSaver: Remove Session"},
+	{"command": "save_as", "caption": "SessionSaver: Save Session As"}
+]
