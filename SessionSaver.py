@@ -1,7 +1,10 @@
-import sublime
-import sublime_plugin
+import json 
 import os
 from os.path import join as pjoin
+
+import sublime
+import sublime_plugin
+
 
 packages_path = sublime.packages_path()
 plugin_dir = pjoin(packages_path, 'SessionSaver')
@@ -28,11 +31,35 @@ class SaveAsCommand(sublime_plugin.WindowCommand):
 
 	def handle_response(self, answer, session):
 		if answer:
-			views = self.window.views()
-			with open(session, 'w') as f:
-				for v in views:
-					f.write(v.file_name() + '\n')
-			sublime.status_message('Session saved successfully as ' + os.path.basename(session))
+			# Save all windows, groups of views and views on a json file
+			session_content = {}
+			windows = sublime.windows()
+			active_window = sublime.active_window().id()
+			for w_id, w in enumerate(windows):
+				session_content[w_id] = {}
+				session_content[w_id]['active'] = True if active_window == w.id() else False
+				active_group = w.active_group()
+				groups = {}
+				for g_id in range(w.num_groups()):
+					groups[g_id] = {}
+					groups[g_id]['active'] = True if active_group == g_id else False
+					active_view = w.active_view_in_group(g_id).id()
+					list_views = w.views_in_group(g_id)
+					views = {}
+					for v_id, v in enumerate(list_views):
+						views[v_id] = {}
+						views[v_id]['active'] = True if v.id() == active_view else False
+						views[v_id]['file'] = v.file_name()
+					groups[g_id]['views'] = views
+				session_content[w_id]['groups'] = groups
+			with open(session + '.json', 'w') as f:	
+				try:
+					json.dump(session_content, f, indent=2)
+				except:
+					sublime.status_message('Uops, something went wrong trying ' + \
+						'to save your session, please try it again.')
+				else:
+					sublime.status_message('Session saved successfully as ' + os.path.basename(session))
 		else:
 			sublime.status_message('Saving session canceled')
 
