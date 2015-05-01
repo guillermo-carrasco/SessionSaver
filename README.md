@@ -1,5 +1,6 @@
 # Session Saver plugin for SUBLIME 2
 
+**NOTE:** This plugin is _discontinued_ and only remains in GitHub for reference.
 
 ## Author: Guillermo Carrasco Hernandez
 
